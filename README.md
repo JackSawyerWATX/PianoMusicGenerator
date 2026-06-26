@@ -25,10 +25,10 @@ Piano Music Generator is an experimental project that bridges the gap between vi
 ## Features
 
 - 🎨 **Image to Music Conversion**: Transform any image into a piano composition
-- 🎵 **Music21 Integration**: Generate proper music notation and display scores
+- 🎵 **MIDI Export**: Generate playable MIDI files from images
+- 🔊 **Music21 Integration**: Generate proper music notation using music21
 - ⚡ **Efficient Processing**: Samples pixels intelligently to create manageable compositions
 - 🎹 **Customizable Mappings**: Adjust sampling rates, note ranges, and base octaves
-- 📊 **Visual Output**: Display musical scores in text format
 - 🔄 **Flexible**: Works with any image format supported by Pillow
 
 ## Tech Stack
@@ -70,10 +70,11 @@ Output/Display
 
 ```
 PianoMusicGenerator/
-├── run.py                 # Main script - entry point
-├── README.md             # This file
-├── SyntronicLabsStandup.png  # Example image
-└── requirements.txt      # Python dependencies (optional)
+├── run.py                      # Main script - entry point
+├── README.md                   # This file
+├── SyntronicLabsStandup.png    # Example image
+├── output.mid                  # Generated MIDI file (created after running script)
+└── requirements.txt            # Python dependencies (optional)
 ```
 
 ## Getting Started
@@ -112,19 +113,20 @@ PianoMusicGenerator/
    ```bash
    python run.py
    ```
-4. **View the result**: The musical score displays in text format
+4. **Play the result**: A MIDI file `output.mid` is generated and ready to play!
 
 ### Basic Example
 
 ```python
 from PIL import Image
-from music21 import stream, note
+from music21 import stream, note, instrument
 
 # Load and convert image to grayscale
 img = Image.open("SyntronicLabsStandup.png").convert("L")
 
-# Create a music stream
+# Create a music stream and add piano instrument
 s = stream.Stream()
+s.append(instrument.Piano())
 
 # Convert pixels to notes
 pixels = list(img.getdata())
@@ -132,9 +134,28 @@ for pixel in pixels[::500]:  # Sample every 500th pixel
     n = note.Note(60 + pixel//15)  # Map brightness to note
     s.append(n)
 
-# Display the result
-s.show('text')
+# Export to MIDI file
+s.write('midi', fp='output.mid')
+print("✓ MIDI file saved as 'output.mid'")
 ```
+
+## Playing the Generated Music
+
+After running the script, `output.mid` is created and ready to play:
+
+**Option 1: Play with Media Player**
+- Double-click `output.mid` in Windows File Explorer
+- Opens with your default media player (VLC, Windows Media Player, etc.)
+
+**Option 2: Open in Music Notation Software**
+- MuseScore (free): https://musescore.org/
+- Finale, Sibelius, or other notation software
+- View the sheet music and listen to playback
+
+**Option 3: Playback Online**
+- Use online MIDI players (search "MIDI player online")
+- Upload your `output.mid` file
+- Listen in your browser
 
 ## Configuration
 
@@ -206,7 +227,7 @@ We welcome contributions! Here's how you can help:
 ### Areas for Contribution
 
 - 🎨 RGB/Color-aware note mapping
-- 🔊 Audio playback/MIDI export
+- 🔊 Direct audio playback (in-app)
 - 📈 Performance optimization for large images
 - 📖 Additional documentation and examples
 - 🧪 Unit tests and test coverage
@@ -216,16 +237,18 @@ We welcome contributions! Here's how you can help:
 
 Future enhancements and roadmap items:
 
+- [x] **MIDI Export**: Generate MIDI files directly ✅
 - [ ] **Color Mapping**: Map RGB channels to different instruments
-- [ ] **Audio Export**: Generate MIDI or WAV files directly
+- [ ] **WAV Export**: Generate WAV files with sound synthesis
 - [ ] **Web Interface**: Browser-based image-to-music converter
 - [ ] **Real-time Preview**: Live audio playback during generation
 - [ ] **Advanced Filters**: Edge detection, contrast adjustment
 - [ ] **Batch Processing**: Convert multiple images at once
-- [ ] **Machine Learning**: Learn note patterns from compositions
+- [ ] **Multiple Instruments**: Use different instruments per color channel
+- [ ] **Tempo Control**: Adjust speed of generated compositions
 - [ ] **CLI Tool**: Command-line interface for easier usage
 - [ ] **Performance Metrics**: Benchmark and optimize processing speed
-- [ ] **Documentation**: Video tutorials and detailed guides
+- [ ] **Video Tutorials**: Step-by-step guides
 
 ## License
 
